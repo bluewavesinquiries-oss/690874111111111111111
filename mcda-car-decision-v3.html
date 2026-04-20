@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCDA v3 — Destinator vs Eclipse Cross · 37 Criteria</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --surface: #111118;
+  --card: #15151e;
+  --card2: #191924;
+  --border: #252532;
+  --border2: #2e2e3e;
+  --gold: #d4a853;
+  --gold2: #f0c878;
+  --blue: #6db5d4;
+  --blue2: #9dd5f4;
+  --green: #7ec87a;
+  --red: #d46d6d;
+  --text: #ece9e2;
+  --muted: #6e6e82;
+  --muted2: #9090a8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(180deg, #0d0d1a 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 48px 20px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(212,168,83,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 6vw, 52px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+}
+
+.hero h1 em { color: var(--gold); font-style: normal; }
+
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.hbadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.hbadge-gold { border-color: rgba(212,168,83,0.4); color: var(--gold); background: rgba(212,168,83,0.08); }
+.hbadge-blue { border-color: rgba(109,181,212,0.4); color: var(--blue); background: rgba(109,181,212,0.08); }
+.hbadge-green { border-color: rgba(126,200,122,0.4); color: var(--green); background: rgba(126,200,122,0.08); }
+
+/* LAYOUT */
+.container { max-width: 780px; margin: 0 auto; padding: 0 16px; }
+
+/* STICKY SCOREBOARD */
+.scoreboard {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,8,16,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+}
+
+.sb-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.sb-car { display: flex; flex-direction: column; }
+.sb-car.right { align-items: flex-end; }
+
+.sb-name { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+.sb-name.gold { color: var(--gold); }
+.sb-name.blue { color: var(--blue); }
+
+.sb-score {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sb-score.gold { color: var(--gold2); }
+.sb-score.blue { color: var(--blue2); }
+
+.sb-bar-area { flex: 1; }
+
+.sb-versus {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+
+.sb-verdict {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.sb-bars {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--border2);
+  margin-top: 8px;
+}
+
+.sb-bar-d { background: linear-gradient(to right, #c8933e, var(--gold2)); transition: width 0.4s; }
+.sb-bar-e { background: linear-gradient(to right, #5da5c4, var(--blue2)); transition: width 0.4s; }
+
+/* PROFILE ROW */
+.profile-strip {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+}
+
+.profile-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+
+.plabel { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-right: 4px; font-weight: 600; }
+
+.pbadge {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--muted2);
+}
+
+/* MAIN CONTENT */
+.main { padding: 28px 0; }
+
+/* INSTRUCTIONS */
+.instr {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 28px;
+  font-size: 12px;
+  color: var(--muted2);
+  line-height: 1.7;
+}
+.instr strong { color: var(--gold); }
+.instr span.bl { color: var(--blue); }
+.instr span.gr { color: var(--green); }
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.tab.active {
+  background: var(--card2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+
+/* CATEGORY SECTION */
+.cat-section { margin-bottom: 32px; }
+
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cat-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted2); font-weight: 600; }
+.cat-count { font-size: 10px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1px 8px; }
+.cat-scores {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+}
+.cat-sd { color: var(--gold); font-weight: 600; }
+.cat-se { color: var(--blue); font-weight: 600; }
+
+.criteria-list { display: flex; flex-direction: column; gap: 10px; }
+
+/* CRITERION CARD */
+.crit-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+
+.crit-card:hover { border-color: var(--border2); }
+.crit-card.is-new { border-color: rgba(126,200,122,0.2); }
+.crit-card.is-new:hover { border-color: rgba(126,200,122,0.4); }
+
+.crit-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.crit-info { flex: 1; }
+
+.crit-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.crit-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+.new-pill {
+  display: inline-block;
+  background: rgba(126,200,122,0.12);
+  border: 1px solid rgba(126,200,122,0.25);
+  color: var(--green);
+  font-size: 8px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.wt-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 4px 10px;
+  text-align: center;
+  min-width: 48px;
+  flex-shrink: 0;
+}
+
+.wt-val { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--gold); display: block; }
+.wt-lbl { font-size: 8px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); }
+
+/* Evidence */
+.evidence { font-size: 10px; color: rgba(126,200,122,0.65); margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+
+/* Sliders */
+.slider-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.sl-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); width: 68px; flex-shrink: 0; }
+input[type="range"] { flex: 1; -webkit-appearance: none; height: 3px; border-radius: 2px; outline: none; cursor: pointer; }
+.sl-w { background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--p,50%), var(--border2) var(--p,50%)); }
+.sl-d { background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--p,50%), var(--border2) var(--p,50%)); }
+.sl-e { background: linear-gradient(to right, var(--blue) 0%, var(--blue) var(--p,50%), var(--border2) var(--p,50%)); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); }
+.sl-w::-webkit-slider-thumb { background: var(--gold2); }
+.sl-d::-webkit-slider-thumb { background: var(--gold2); }
+.sl-e::-webkit-slider-thumb { background: var(--blue2); }
+.sl-val { font-size: 11px; font-weight: 600; width: 18px; text-align: right; flex-shrink: 0; }
+.sv-w { color: var(--gold); }
+.sv-d { color: var(--gold); }
+.sv-e { color: var(--blue); }
+
+/* Mini bars */
+.mini-bars { display: flex; gap: 6px; margin-top: 6px; }
+.mb-wrap { flex: 1; }
+.mb-lbl { font-size: 9px; margin-bottom: 2px; }
+.mb-lbl.gd { color: var(--gold); }
+.mb-lbl.bl { color: var(--blue); }
+.mb-track { height: 4px; background: var(--surface); border-radius: 2px; overflow: hidden; }
+.mb-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.mf-d { background: var(--gold); }
+.mf-e { background: var(--blue); }
+
+/* WIN INDICATOR */
+.win-ind {
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+.wi-d { background: var(--gold); }
+.wi-e { background: var(--blue); }
+
+/* TABLE VIEW */
+.table-wrap { overflow-x: auto; }
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  min-width: 500px;
+}
+.breakdown-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  background: var(--surface);
+}
+.breakdown-table td { padding: 9px 10px; border-bottom: 1px solid rgba(37,37,50,0.6); vertical-align: middle; }
+.breakdown-table tr:hover td { background: rgba(255,255,255,0.015); }
+.breakdown-table tr:last-child td { border-bottom: none; }
+.td-cat { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.td-name { color: var(--text); font-weight: 500; }
+.td-new-name { color: var(--green); font-weight: 500; }
+.td-w { color: var(--gold); font-weight: 600; text-align: center; }
+.td-d { color: var(--gold); font-weight: 600; text-align: center; }
+.td-e { color: var(--blue); font-weight: 600; text-align: center; }
+.td-wd { color: rgba(212,168,83,0.8); text-align: center; }
+.td-we { color: rgba(109,181,212,0.8); text-align: center; }
+.tfoot-row td { padding-top: 12px; font-weight: 700; font-size: 12px; border-top: 2px solid var(--border2); }
+
+/* CHART */
+.chart-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 16px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.chart-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.chart-sub { font-size: 11px; color: var(--muted); margin-bottom: 20px; }
+
+/* CATEGORY BAR CHART */
+.cat-chart { margin-bottom: 28px; }
+
+.cat-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cat-bar-label { font-size: 10px; color: var(--muted2); width: 110px; flex-shrink: 0; text-align: right; }
+
+.cat-bar-track {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cat-bar-d, .cat-bar-e {
+  height: 8px;
+  border-radius: 4px;
+  transition: width 0.4s;
+  min-width: 2px;
+}
+
+.cat-bar-d { background: linear-gradient(to right, #a8731e, var(--gold2)); }
+.cat-bar-e { background: linear-gradient(to right, #3d95b4, var(--blue2)); }
+
+.cat-bar-val { font-size: 10px; width: 28px; flex-shrink: 0; }
+.cat-bar-val.gd { color: var(--gold); }
+.cat-bar-val.bl { color: var(--blue); }
+
+/* RESET */
+.controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.ctrl-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted2);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.2s;
+}
+.ctrl-btn:hover { border-color: var(--gold); color: var(--gold); }
+.ctrl-btn.blue-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* NOTE */
+.note {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.note strong { color: var(--text); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+@media (max-width: 480px) {
+  .sb-score { font-size: 24px; }
+  .sb-inner { gap: 8px; }
+  .cat-bar-label { width: 80px; font-size: 9px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="eyebrow">Multi-Criteria Decision Analysis · v3</p>
+  <h1>Destinator <em>vs</em> Eclipse Cross</h1>
+  <div class="hero-badges">
+    <span class="hbadge hbadge-gold">37 Criteria</span>
+    <span class="hbadge hbadge-blue">8 Categories</span>
+    <span class="hbadge hbadge-green">Live Scoring</span>
+  </div>
+</div>
+
+<!-- STICKY SCOREBOARD -->
+<div class="scoreboard">
+  <div class="sb-inner">
+    <div class="sb-car">
+      <span class="sb-name gold">Destinator</span>
+      <span class="sb-score gold" id="sb-d">0.0</span>
+    </div>
+    <div>
+      <div class="sb-versus">vs</div>
+      <div class="sb-verdict" id="sb-verdict">—</div>
+      <div class="sb-bars">
+        <div class="sb-bar-d" id="sbb-d" style="width:50%"></div>
+        <div class="sb-bar-e" id="sbb-e" style="width:50%"></div>
+      </div>
+    </div>
+    <div class="sb-car right">
+      <span class="sb-name blue">Eclipse Cross</span>
+      <span class="sb-score blue" id="sb-e">0.0</span>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="profile-strip">
+  <div class="profile-inner">
+    <span class="plabel">Your Profile</span>
+    <span class="pbadge">📍 Buy UAE → Use Egypt</span>
+    <span class="pbadge">👨‍👩‍👧 3–4 passengers</span>
+    <span class="pbadge">🏙️ Daily city</span>
+    <span class="pbadge">💰 $25–30K</span>
+    <span class="pbadge">📅 5+ years</span>
+    <span class="pbadge">🛠️ Local mechanic</span>
+    <span class="pbadge">🎯 Family-focused</span>
+  </div>
+</div>
+
+<div class="container">
+<div class="main">
+
+<div class="instr">
+  <strong>How to use:</strong> Drag <strong>Importance</strong> sliders (1–5) to match your priorities. <span class="bl">Blue</span> = Eclipse Cross score, <strong style="color:var(--gold)">Gold</strong> = Destinator score. <span class="gr">Green cards</span> = newly added criteria. All scores are evidence-based from multi-market reviews. The scoreboard updates instantly.
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('criteria')">Criteria Sliders</button>
+  <button class="tab" onclick="showTab('table')">Score Table</button>
+  <button class="tab" onclick="showTab('chart')">Category Chart</button>
+</div>
+
+<!-- CRITERIA TAB -->
+<div id="tab-criteria">
+  <div id="criteria-container"></div>
+</div>
+
+<!-- TABLE TAB -->
+<div id="tab-table" style="display:none">
+  <div class="table-wrap">
+  <table class="breakdown-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Criterion</th>
+        <th>Wt</th>
+        <th style="color:var(--gold)">Dest</th>
+        <th style="color:var(--blue)">EC</th>
+        <th style="color:var(--gold)">D×W</th>
+        <th style="color:var(--blue)">E×W</th>
+        <th>Winner</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+    <tfoot>
+      <tr class="tfoot-row">
+        <td colspan="2" class="td-name">TOTAL</td>
+        <td class="td-w" id="ft-w">—</td>
+        <td>—</td><td>—</td>
+        <td class="td-d" id="ft-d">0</td>
+        <td class="td-e" id="ft-e">0</td>
+        <td id="ft-win">—</td>
+      </tr>
+    </tfoot>
+  </table>
+  </div>
+</div>
+
+<!-- CHART TAB -->
+<div id="tab-chart" style="display:none">
+  <div class="chart-section">
+    <div class="chart-title">Score by Category</div>
+    <div class="chart-sub">Weighted scores per category — adjust sliders to see changes</div>
+    <div class="cat-chart" id="cat-chart"></div>
+    <div style="display:flex;justify-content:center;gap:24px;margin-top:8px;font-size:11px;">
+      <span style="color:var(--gold)">■ Destinator</span>
+      <span style="color:var(--blue)">■ Eclipse Cross</span>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="resetDefaults()">↺ Reset all to defaults</button>
+  <button class="ctrl-btn blue-btn" onclick="setAllWeights(3)">⬤ Set all weights to 3</button>
+  <button class="ctrl-btn" onclick="setAllWeights(5)">⬤ Set all weights to 5</button>
+</div>
+
+<div class="note">
+  <strong>Scoring methodology:</strong> Each criterion scored 1–10 based on verified reviews from UAE, Indonesia, Philippines, South Africa, Bangladesh, and international automotive media. Weight reflects importance to your profile (1–5). Final score = Σ(weight × score) normalised to 100. <strong>37 criteria</strong> span 8 categories: Value & Cost, Comfort, Space, Driving, Quality, Technology, After-Sales, and Capability. New criteria (v3) include: Seat comfort long-distance, Climate control, Connectivity, Warranty terms, Depreciation rate, Total cost of ownership, Environmental compliance, Boot space, Visibility, Headlight quality, AC performance, Driver assistance effectiveness, Towing capacity, Insurance cost, Ergonomics, Charging/USB access, Brand perception, Independent service availability, Acceleration real-world, and Tyre replacement cost.
+</div>
+
+</div><!-- /main -->
+</div><!-- /container -->
+
+<script>
+const CATS = {
+  'Value & Cost':     { color: '#d4a853', dot: '#d4a853' },
+  'Comfort & NVH':   { color: '#a07858', dot: '#c8a070' },
+  'Space':           { color: '#8878c8', dot: '#a898e8' },
+  'Driving':         { color: '#5898a8', dot: '#78b8c8' },
+  'Quality':         { color: '#7898c8', dot: '#98b8e8' },
+  'Technology':      { color: '#6db5d4', dot: '#9dd5f4' },
+  'After-Sales':     { color: '#d46d6d', dot: '#e88888' },
+  'Capability':      { color: '#7ec87a', dot: '#9ee89a' },
+};
+
+const CRITERIA = [
+  // ── VALUE & COST ──
+  { id:'value',     cat:'Value & Cost',   name:'Value for Money',            desc:'Total cost relative to features, space, and technology offered at that price point', w:5, d:9, e:5 },
+  { id:'tco',       cat:'Value & Cost',   name:'Total Cost of Ownership',    desc:'Running costs, maintenance, insurance, and fuel over 5 years of ownership', w:4, d:7, e:6, isNew:true,
+    ev:'"CVT + 1.5T shared across markets keeps service costs low" — multi-market reviews. Eclipse Cross documented brake wear issues add to long-term costs.' },
+  { id:'insurance', cat:'Value & Cost',   name:'Insurance Cost',             desc:'Estimated insurance premium for the Egyptian/Gulf market — based on vehicle value and safety rating', w:3, d:7, e:6, isNew:true,
+    ev:'Destinator priced ~20% lower in UAE → lower insured value → typically lower premium. Eclipse Cross higher sticker price increases base premium.' },
+  { id:'tyre',      cat:'Value & Cost',   name:'Tyre Replacement Cost',      desc:'Cost and availability of replacement tyres (18-inch vs smaller options)', w:2, d:6, e:7, isNew:true,
+    ev:'Both run 18-inch wheels. Eclipse Cross 225/55R18 slightly more common globally. Destinator same size but newer — tyre availability in Egypt still developing.' },
+  { id:'deprec',    cat:'Value & Cost',   name:'Depreciation Rate',          desc:'Projected resale value loss over 3 and 5 years — brand perception + model age factor', w:3, d:6, e:5, isNew:true,
+    ev:'Eclipse Cross is an ageing 2018-era design — depreciation accelerating. Destinator is brand new 2025 platform — expected slower initial depreciation.' },
+
+  // ── COMFORT & NVH ──
+  { id:'comfort',   cat:'Comfort & NVH',  name:'Ride Comfort',               desc:'Suspension tuning and passenger comfort on mixed city and rough roads', w:5, d:8, e:5 },
+  { id:'nvh',       cat:'Comfort & NVH',  name:'Cabin Noise at Highway Speed',desc:'Wind noise, road noise, and CVT drone at 100+ km/h', w:4, d:7, e:4, isNew:true,
+    ev:'"Fairly quiet, minimal NVH" — AutoTrader SA (Destinator). "A lot of wind and road noise" — Motor Illustrated 2025 (Eclipse Cross).' },
+  { id:'seat',      cat:'Comfort & NVH',  name:'Seat Comfort — Long Distance',desc:'Seat padding, lumbar support, and comfort on journeys over 1 hour', w:4, d:8, e:6, isNew:true,
+    ev:'"Leather seats soft and supportive, excellent lumbar" — Business Standard BD (Destinator). "Seat bottom lacks support, side bolsters give way" — Edmunds (Eclipse Cross).' },
+  { id:'ac',        cat:'Comfort & NVH',  name:'AC Performance in Hot Climate',desc:'Cooling capacity and speed in Egypt/UAE summer heat — critical criterion', w:5, d:8, e:6, isNew:true,
+    ev:'Destinator: Nanoe X air purifier + Dry Mode specifically for humidity — UAE tested. Dual-zone AC with ceiling vents reaches 3rd row. Eclipse Cross: single-zone struggles in heat per owner reports.' },
+  { id:'ergo',      cat:'Comfort & NVH',  name:'Ergonomics & Driver Position',desc:'Driving position, seat adjustability, steering wheel range, and dashboard reachability', w:3, d:7, e:6, isNew:true,
+    ev:'"Ergonomic position, easy to adapt" — Speednride Indonesia (Destinator). "Low-mounted steering, raised seats, compromised entry/exit" — Edmunds (Eclipse Cross).' },
+
+  // ── SPACE ──
+  { id:'space',     cat:'Space',          name:'Interior Space & Practicality',desc:'Cabin room, legroom, and family usability for 3–4 regular passengers', w:5, d:9, e:6 },
+  { id:'boot',      cat:'Space',          name:'Boot / Cargo Space',          desc:'Luggage capacity with seats up and folded — practical loading area', w:4, d:8, e:6, isNew:true,
+    ev:'Destinator: 620L third-row folded (AutoTrader SA). Deep underfloor tray. Eclipse Cross: cargo hurt by sloping roofline — no more than smaller crossovers (US News).' },
+  { id:'usb',       cat:'Space',          name:'USB & Charging Access',       desc:'Number and placement of USB-A and USB-C ports — access for all rows', w:3, d:9, e:5, isNew:true,
+    ev:'Destinator GT: USB ports in all 3 rows, wireless charging, USB-C up to 3rd row. Eclipse Cross: rear USB added only in 2024 SE+ trim — base trims lack rear charging.' },
+  { id:'storage',   cat:'Space',          name:'In-Cabin Storage',            desc:'Cupholders, door pockets, centre console, and compartment count', w:3, d:8, e:6, isNew:true,
+    ev:'Destinator: 25 storage spots (Mitsubishi official). Eclipse Cross: centre console too small per JD Power — door pockets not suited for large drinks.' },
+
+  // ── DRIVING ──
+  { id:'stability', cat:'Driving',        name:'Driving Stability',           desc:'Body roll, cornering composure, and dynamic behaviour at speed', w:3, d:6, e:6 },
+  { id:'parking',   cat:'Driving',        name:'Parking Ease & Turning Radius',desc:'Maneuverability in city traffic — turning circle, visibility aids', w:4, d:8, e:7, isNew:true,
+    ev:'Destinator: 5.1m turning radius (Mitsubishi UAE). 360° camera + parking sensors standard on top trim. Eclipse Cross: 5.3m / 34.8ft — slightly wider.' },
+  { id:'economy',   cat:'Driving',        name:'Fuel Economy',                desc:'Real-world fuel consumption in city and mixed driving conditions', w:3, d:6, e:7 },
+  { id:'accel',     cat:'Driving',        name:'Real-World Acceleration',     desc:'Actual responsiveness in daily driving — highway merging, overtaking', w:3, d:7, e:5, isNew:true,
+    ev:'"Sprightly, very eager to accelerate — 163hp turbo impressive" — AutoIndustriya PH (Destinator). "Runs out of steam on highway merging" — Consumer Reports (Eclipse Cross).' },
+  { id:'visibility2',cat:'Driving',       name:'Driver Visibility',           desc:'Forward, side, and rear visibility — ability to see surroundings clearly', w:3, d:7, e:5, isNew:true,
+    ev:'Destinator: upright greenhouse, flat roofline = good all-round vision. Eclipse Cross: "curvy styling hurts driver view out" — Consumer Reports. Rear pillar impedes views.' },
+
+  // ── QUALITY ──
+  { id:'material',  cat:'Quality',        name:'Interior Material Quality',   desc:'Soft-touch surfaces, premium feel, and scratch resistance of plastics', w:4, d:8, e:5, isNew:true,
+    ev:'"Soft-touch leather, silver accents, solid build" — Business Standard BD. "Hard plastics, piano black scratches if you look at it wrong" — Edmunds, JD Power (Eclipse Cross).' },
+  { id:'build',     cat:'Quality',        name:'Build Quality & Rattles',     desc:'Absence of squeaks, rattles, panel gaps, and overall assembly quality', w:3, d:7, e:5 },
+  { id:'headlights',cat:'Quality',        name:'Headlight Quality',           desc:'Brightness, beam pattern, and safety effectiveness of LED lighting', w:2, d:7, e:4, isNew:true,
+    ev:'Destinator: T-shaped LED DRLs + LED projectors — "bright enough for highway night drives" (Zigwheels UAE). Eclipse Cross: IIHS rated headlights "Poor" on multiple model years.' },
+
+  // ── TECHNOLOGY ──
+  { id:'tech',      cat:'Technology',     name:'Technology & Features',       desc:'Infotainment, ADAS safety, connectivity, and modern amenities', w:4, d:9, e:6 },
+  { id:'safety',    cat:'Technology',     name:'Safety Ratings & Systems',    desc:'NCAP ratings, airbags, active safety features across trims', w:4, d:8, e:6 },
+  { id:'connect',   cat:'Technology',     name:'Connectivity & App Integration',desc:'Wireless CarPlay, Android Auto, vehicle app, OTA updates, hotspot', w:3, d:9, e:6, isNew:true,
+    ev:'Destinator: Mitsubishi Connect app — remote AC, fuel check, SOS, location. Wireless CarPlay/Android Auto. Eclipse Cross: no OTA, no remote app, wired CarPlay only on base.' },
+  { id:'adas',      cat:'Technology',     name:'Driver Assistance Effectiveness',desc:'Real-world usefulness of ACC, FCM, BSW, RCTA, lane assist in city driving', w:4, d:7, e:4, isNew:true,
+    ev:'"ACC and Lane Keeping smooth" — owner review Indonesia. "Safety features suck — barely audible warning, doesn\'t slow car reliably" — KBB owners (Eclipse Cross).' },
+  { id:'modernity', cat:'Technology',     name:'Platform Modernity',          desc:'How current the design, platform, and engineering are vs ageing technology', w:3, d:9, e:4 },
+
+  // ── AFTER-SALES ──
+  { id:'aftersales',cat:'After-Sales',    name:'After-Sales Support in Egypt',desc:'Local dealer presence, warranty coverage, and spare parts access in Egypt', w:4, d:3, e:7 },
+  { id:'reliability',cat:'After-Sales',   name:'Reliability',                 desc:'Documented mechanical issues and powertrain track record', w:4, d:7, e:6 },
+  { id:'warranty',  cat:'After-Sales',    name:'Warranty Terms',              desc:'Length, coverage, and conditions of manufacturer warranty', w:3, d:7, e:6, isNew:true,
+    ev:'Destinator: 5-year unlimited mileage (South Africa confirmed). UAE: standard Mitsubishi terms. Eclipse Cross: 5yr/60k miles US — similar but shorter than Hyundai/Kia rivals.' },
+  { id:'indie',     cat:'After-Sales',    name:'Independent Service Availability',desc:'Ease of finding knowledgeable mechanics outside dealer network — critical for Egypt', w:5, d:6, e:6, isNew:true,
+    ev:'Both use same 1.5T 4B40 CVT family — well-understood by Mitsubishi-trained mechanics. Eclipse Cross parts more established globally. Destinator parts network still growing.' },
+  { id:'resale',    cat:'After-Sales',    name:'Resale Value',                desc:'Expected market value retention over 5 years in Egypt/Gulf markets', w:3, d:6, e:5 },
+  { id:'enviro',    cat:'After-Sales',    name:'Environmental/Emissions Compliance',desc:'Compatibility with Egypt and Gulf emissions standards — registration risk', w:3, d:7, e:7, isNew:true,
+    ev:'Both petrol 1.5T — similar emissions profile. UAE-spec Destinator engineered for regional compliance. Eclipse Cross long-established across GCC markets.' },
+
+  // ── CAPABILITY ──
+  { id:'ground',    cat:'Capability',     name:'Ground Clearance',            desc:'Ability to handle rough roads, speed bumps, and light off-road in Egypt', w:3, d:8, e:7 },
+  { id:'awd',       cat:'Capability',     name:'AWD / Traction Capability',   desc:'All-wheel drive availability and traction in wet or challenging conditions', w:1, d:2, e:8 },
+  { id:'brand',     cat:'Capability',     name:'Brand Perception in Market',  desc:'How the brand and model is perceived in Egypt — status, recognition, confidence', w:2, d:6, e:6, isNew:true,
+    ev:'Mitsubishi has decent recognition in Egypt via Montero Sport/Pajero heritage. Eclipse Cross unknown to most Egyptian buyers. Destinator also new — both starting from low recognition.' },
+  { id:'towing',    cat:'Capability',     name:'Towing Capacity',             desc:'Manufacturer-rated towing ability — useful for trailers, caravans', w:1, d:5, e:6, isNew:true,
+    ev:'Eclipse Cross: 1,500 lbs (680 kg) rated towing. Destinator: not officially rated for towing in most markets — FWD-only limits practical capacity.' },
+];
+
+let state = CRITERIA.map(c => ({ ...c, w: c.w, d: c.d, e: c.e }));
+
+// ── RENDER CRITERIA ──
+function renderCriteria() {
+  const container = document.getElementById('criteria-container');
+  container.innerHTML = '';
+
+  const cats = {};
+  state.forEach((c, i) => {
+    if (!cats[c.cat]) cats[c.cat] = [];
+    cats[c.cat].push({ ...c, idx: i });
+  });
+
+  Object.entries(cats).forEach(([catName, items]) => {
+    const catInfo = CATS[catName] || { color: '#888', dot: '#aaa' };
+    const sec = document.createElement('div');
+    sec.className = 'cat-section';
+
+    const totalD = items.reduce((s, c) => s + c.w * c.d, 0);
+    const totalE = items.reduce((s, c) => s + c.w * c.e, 0);
+    const maxCat = items.reduce((s, c) => s + c.w * 10, 0);
+    const pD = maxCat ? (totalD / maxCat * 100).toFixed(0) : 0;
+    const pE = maxCat ? (totalE / maxCat * 100).toFixed(0) : 0;
+
+    sec.innerHTML = `
+      <div class="cat-header">
+        <div class="cat-dot" style="background:${catInfo.dot}"></div>
+        <span class="cat-title">${catName}</span>
+        <span class="cat-count">${items.length}</span>
+        <div class="cat-scores">
+          <span class="cat-sd">D: ${pD}%</span>
+          <span class="cat-se">E: ${pE}%</span>
+        </div>
+      </div>
+      <div class="criteria-list" id="cat-${catName.replace(/[^a-z]/gi,'_')}"></div>
+    `;
+    container.appendChild(sec);
+
+    const list = sec.querySelector('.criteria-list');
+    items.forEach(c => {
+      const wPct = ((c.w - 1) / 4 * 100).toFixed(0);
+      const dPct = ((c.d - 1) / 9 * 100).toFixed(0);
+      const ePct = ((c.e - 1) / 9 * 100).toFixed(0);
+
+      const card = document.createElement('div');
+      card.className = 'crit-card' + (c.isNew ? ' is-new' : '');
+
+      const evHTML = c.ev ? `<div class="evidence">📌 ${c.ev}</div>` : '';
+      const newPill = c.isNew ? `<span class="new-pill">New</span>` : '';
+
+      card.innerHTML = `
+        <div class="crit-top">
+          <div class="crit-info">
+            <div class="crit-name">${c.name}${newPill}</div>
+            <div class="crit-desc">${c.desc}</div>
+          </div>
+          <div class="wt-chip">
+            <span class="wt-val" id="wv-${c.idx}">${c.w}</span>
+            <span class="wt-lbl">Weight</span>
+          </div>
+        </div>
+        ${evHTML}
+        <div class="slider-row">
+          <span class="sl-label">Importance</span>
+          <input type="range" class="sl-w" min="1" max="5" value="${c.w}" style="--p:${wPct}%"
+            oninput="upW(${c.idx},this.value,this)">
+          <span class="sl-val sv-w" id="sw-${c.idx}">${c.w}</span>
+        </div>
+        <div class="slider-row">
+          <span class="sl-label" style="color:var(--gold)">Destinator</span>
+          <input type="range" class="sl-d" min="1" max="10" value="${c.d}" style="--p:${dPct}%"
+            oninput="upS(${c.idx},'d',this.value,this)">
+          <span class="sl-val sv-d" id="sd-${c.idx}">${c.d}</span>
+        </div>
+        <div class="slider-row">
+          <span class="sl-label" style="color:var(--blue)">Eclipse Cross</span>
+          <input type="range" class="sl-e" min="1" max="10" value="${c.e}" style="--p:${ePct}%"
+            oninput="upS(${c.idx},'e',this.value,this)">
+          <span class="sl-val sv-e" id="se-${c.idx}">${c.e}</span>
+        </div>
+        <div class="mini-bars">
+          <div class="mb-wrap">
+            <div class="mb-lbl gd">Dest.</div>
+            <div class="mb-track"><div class="mb-fill mf-d" id="mbd-${c.idx}" style="width:${c.d*10}%"></div></div>
+          </div>
+          <div class="mb-wrap">
+            <div class="mb-lbl bl">Eclipse</div>
+            <div class="mb-track"><div class="mb-fill mf-e" id="mbe-${c.idx}" style="width:${c.e*10}%"></div></div>
+          </div>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  });
+
+  recalc();
+}
+
+function upW(i, val, el) {
+  state[i].w = parseInt(val);
+  document.getElementById('wv-'+i).textContent = val;
+  document.getElementById('sw-'+i).textContent = val;
+  el.style.setProperty('--p', ((val-1)/4*100).toFixed(0)+'%');
+  recalc();
+  updateCatHeaders();
+}
+
+function upS(i, car, val, el) {
+  state[i][car] = parseInt(val);
+  document.getElementById((car==='d'?'sd-':'se-')+i).textContent = val;
+  el.style.setProperty('--p', ((val-1)/9*100).toFixed(0)+'%');
+  document.getElementById('mb'+car+'-'+i).style.width = (val*10)+'%';
+  recalc();
+  updateCatHeaders();
+}
+
+function updateCatHeaders() {
+  const cats = {};
+  state.forEach(c => {
+    if (!cats[c.cat]) cats[c.cat] = { d:0, e:0, max:0 };
+    cats[c.cat].d += c.w * c.d;
+    cats[c.cat].e += c.w * c.e;
+    cats[c.cat].max += c.w * 10;
+  });
+  Object.entries(cats).forEach(([cat, v]) => {
+    const key = 'cat-'+cat.replace(/[^a-z]/gi,'_');
+    const parent = document.getElementById(key)?.closest('.cat-section');
+    if (!parent) return;
+    const pD = v.max ? (v.d/v.max*100).toFixed(0) : 0;
+    const pE = v.max ? (v.e/v.max*100).toFixed(0) : 0;
+    const scores = parent.querySelector('.cat-scores');
+    if (scores) scores.innerHTML = `<span class="cat-sd">D: ${pD}%</span><span class="cat-se">E: ${pE}%</span>`;
+  });
+}
+
+function recalc() {
+  let totalD=0, totalE=0, maxP=0;
+  state.forEach(c => { totalD+=c.w*c.d; totalE+=c.w*c.e; maxP+=c.w*10; });
+  const normD = (totalD/maxP*100).toFixed(1);
+  const normE = (totalE/maxP*100).toFixed(1);
+
+  document.getElementById('sb-d').textContent = normD;
+  document.getElementById('sb-e').textContent = normE;
+
+  const pD = totalD/(totalD+totalE)*100;
+  document.getElementById('sbb-d').style.width = pD+'%';
+  document.getElementById('sbb-e').style.width = (100-pD)+'%';
+
+  const diff = Math.abs(normD-normE).toFixed(1);
+  const verdict = document.getElementById('sb-verdict');
+  if (diff < 1.5) {
+    verdict.textContent = '≈ Too Close';
+    verdict.style.color = 'var(--muted2)';
+  } else if (totalD > totalE) {
+    verdict.textContent = `Destinator +${diff}`;
+    verdict.style.color = 'var(--gold)';
+  } else {
+    verdict.textContent = `Eclipse +${diff}`;
+    verdict.style.color = 'var(--blue)';
+  }
+
+  // Update table
+  const tbody = document.getElementById('table-body');
+  if (tbody) {
+    tbody.innerHTML = '';
+    let lastCat = '';
+    state.forEach(c => {
+      const wd=(c.w*c.d), we=(c.w*c.e);
+      const w = c.d>c.e ? `<span style="color:var(--gold)">Dest<span class="win-ind wi-d"></span></span>`
+               : c.e>c.d ? `<span style="color:var(--blue)">Eclipse<span class="win-ind wi-e"></span></span>`
+               : `<span style="color:var(--muted)">Tie</span>`;
+      const catCell = c.cat !== lastCat ? `<td class="td-cat" rowspan="1">${c.cat}</td>` : `<td class="td-cat"></td>`;
+      lastCat = c.cat;
+      const nameClass = c.isNew ? 'td-new-name' : 'td-name';
+      tbody.innerHTML += `<tr>
+        ${catCell}
+        <td class="${nameClass}">${c.name}${c.isNew?'<span class="new-pill">New</span>':''}</td>
+        <td class="td-w">${c.w}</td>
+        <td class="td-d">${c.d}</td>
+        <td class="td-e">${c.e}</td>
+        <td class="td-wd">${wd}</td>
+        <td class="td-we">${we}</td>
+        <td>${w}</td>
+      </tr>`;
+    });
+    document.getElementById('ft-w').textContent = state.reduce((s,c)=>s+c.w,0);
+    document.getElementById('ft-d').textContent = totalD;
+    document.getElementById('ft-e').textContent = totalE;
+    const fw = document.getElementById('ft-win');
+    if(totalD>totalE) fw.innerHTML=`<span style="color:var(--gold);font-weight:700">Destinator ✓</span>`;
+    else if(totalE>totalD) fw.innerHTML=`<span style="color:var(--blue);font-weight:700">Eclipse Cross ✓</span>`;
+    else fw.innerHTML=`<span style="color:var(--muted)">Tie</span>`;
+  }
+
+  // Update chart
+  updateChart();
+}
+
+function updateChart() {
+  const chartEl = document.getElementById('cat-chart');
+  if (!chartEl) return;
+
+  const cats = {};
+  state.forEach(c => {
+    if (!cats[c.cat]) cats[c.cat] = { d:0, e:0, max:0 };
+    cats[c.cat].d += c.w * c.d;
+    cats[c.cat].e += c.w * c.e;
+    cats[c.cat].max += c.w * 10;
+  });
+
+  const globalMax = Math.max(...Object.values(cats).map(v => Math.max(v.d, v.e)));
+
+  chartEl.innerHTML = '';
+  Object.entries(cats).forEach(([cat, v]) => {
+    const wD = (v.d/globalMax*100).toFixed(1);
+    const wE = (v.e/globalMax*100).toFixed(1);
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = `
+      <span class="cat-bar-label">${cat}</span>
+      <div class="cat-bar-track">
+        <div class="cat-bar-d" style="width:${wD}%"></div>
+        <div class="cat-bar-e" style="width:${wE}%"></div>
+      </div>
+      <div>
+        <div class="cat-bar-val gd">${v.d}</div>
+        <div class="cat-bar-val bl">${v.e}</div>
+      </div>
+    `;
+    chartEl.appendChild(row);
+  });
+}
+
+function showTab(tab) {
+  ['criteria','table','chart'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    el.classList.toggle('active', ['criteria','table','chart'][i]===tab);
+  });
+  if(tab==='chart') updateChart();
+}
+
+function resetDefaults() {
+  state = CRITERIA.map(c => ({ ...c }));
+  renderCriteria();
+}
+
+function setAllWeights(val) {
+  state.forEach((c,i) => {
+    c.w = val;
+    const wEl = document.getElementById('wv-'+i);
+    const swEl = document.getElementById('sw-'+i);
+    if(wEl) wEl.textContent = val;
+    if(swEl) swEl.textContent = val;
+    const rangeEl = document.querySelector(`input[oninput="upW(${i},this.value,this)"]`);
+    if(rangeEl) { rangeEl.value = val; rangeEl.style.setProperty('--p', ((val-1)/4*100)+'%'); }
+  });
+  recalc();
+  updateCatHeaders();
+}
+
+renderCriteria();
+</script>
+</body>
+</html>
